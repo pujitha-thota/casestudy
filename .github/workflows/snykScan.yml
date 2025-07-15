@@ -1,15 +1,19 @@
-name: Snyk Scan using GitHub Actions with Continue on Error as False
+name: Snyk Scan
+
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["SonarQube Scan"]
+    types:
+      - completed
+
 jobs:
-  build:
-    name: SCA scan using Snyk
+  snyk:
+    name: Snyk Scan
     runs-on: ubuntu-latest
+    if: always() # Run even if previous workflow failed
     steps:
-      - uses: actions/checkout@master
-      - name: RunSnyk to check for vulnerabilities
+      - uses: actions/checkout@v4
+      - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/maven@master
         continue-on-error: false
         env:

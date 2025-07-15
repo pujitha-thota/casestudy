@@ -1,17 +1,18 @@
-name: OWASP ZAP Integration with GitHub Actions
-on: 
-  push:
-    branches:
-      - main
+name: OWASP ZAP Scan
+
+on:
+  workflow_run:
+    workflows: ["Snyk Scan"]
+    types:
+      - completed
+
 jobs:
-  build:
-    name: DAST scan using OWASP ZAP
+  zap:
+    name: OWASP ZAP Scan
     runs-on: ubuntu-latest
+    if: always() # Run even if previous workflow failed
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: main
+      - uses: actions/checkout@v4
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
